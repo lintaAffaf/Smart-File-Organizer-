@@ -1,6 +1,7 @@
 import os
 import shutil
-assembled={                                   #defining dictionary keys and values manually
+#defining category folders inside a dictionary 
+assembled={                                  
     ".png"  : "images",
     ".jpeg" : "images",
     ".pdf"  : "documents",
@@ -9,29 +10,38 @@ assembled={                                   #defining dictionary keys and valu
     ".mp4"  : "videos",
     ".keras": "documents"
     }
+
 def File_Organizer(folder):
+    """ Organizes files in a given folder by moving them into
+        subfolders based on their file extension categories."""
     filenames=os.listdir(folder)                   #list of file  names inside folder
-    moved_count=0
-    skipped_count=0
-    for file in filenames:                         #loop in list
-        full_path=os.path.join(folder,file)        #iterating over each file name to get full usable path 
-        if os.path.isfile(full_path):              #checking if the filename is a file or subfolder 
-            extension=os.path.splitext(full_path)   #splitting path to read clearly    
-            ext=extension[1]                        #extracting only extension part from full path 
-            category=assembled.get(ext,"others")    #if any files that doesnot exist in folder categorize it as others 
-            category_folder=os.path.join(folder,category)    #creating path for category folders
-            if not os.path.isdir(category_folder):           #checking if the category folder already exists
-                os.mkdir(category_folder)                     #creating  new directory
+    moved_count=0                                  #counter for how many files are moved
+    skipped_count=0                                #counter for how many files are skipped 
+    
+   
+ 
+    for file in filenames:       #Iterating over each file name to get full usable path and applying 
+        full_path=os.path.join(folder,file)                 
+        if os.path.isfile(full_path):              
+            extension=os.path.splitext(full_path)   
+            ext=extension[1]              # extracting only file extension from file name"          
+            category=assembled.get(ext,"others")   
+            category_folder=os.path.join(folder,category)    
+            if not os.path.isdir(category_folder):#  if condition to ignore any subfolder or any other category not defined 
+                os.mkdir(category_folder)                   
             try: 
-                shutil.move(full_path, category_folder)  #checking with try except block that
+                shutil.move(full_path, category_folder) 
                 print(f"moved {file}, to {category}")  
                 moved_count+=1
             except shutil.Error as e:
                 print(f"Skipped {file}: {e}")
                 skipped_count+=1
-    print(f"Organizing complete:{moved_count} files moved , {skipped_count} files skipped.")       
+    #Outputs a summary of files moved and skipped.
+    print(f"Organizing complete:{moved_count} files moved , {skipped_count} files skipped.") 
+
+# run only when script is executed directly, not when imported    
 if __name__ == "__main__":
-    folder =input("Enter the folder path to organize: ")                #path of main folder
+    folder =input("Enter the folder path to organize: ")               
     if not os.path.isdir(folder):
         print("Error: folder path not found. Please check the path and try again")
         exit()                                             
